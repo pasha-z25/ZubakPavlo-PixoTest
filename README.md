@@ -1,0 +1,1 @@
+# ZubakPavlo-PixoTest
