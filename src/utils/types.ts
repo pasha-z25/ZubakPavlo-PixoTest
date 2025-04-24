@@ -32,3 +32,18 @@ export type ProductType = {
   image: string;
   rating: { rate: number; count: number };
 };
+
+export enum SortBy {
+  UNSORTED = 'unsorted',
+  NAMEaz = 'nameAZ',
+  NAMEza = 'nameZA',
+  PRICE09 = 'price09',
+  PRICE90 = 'price90',
+  RATING09 = 'rating09',
+  RATING90 = 'rating90',
+}
+
+export enum PageView {
+  LIST = 'list',
+  GRID = 'grid',
+}

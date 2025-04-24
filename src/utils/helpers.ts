@@ -1,5 +1,5 @@
 import { API_URL } from './constants';
-import type { ApiClient, ApiOptionsType } from './types';
+import { SortBy, type ApiClient, type ApiOptionsType, type ProductType } from './types';
 
 export const getCurrencyValue = (
   number: number,
@@ -58,4 +58,29 @@ client.delete = function (endpoint: string, config = {}) {
 
 client.patch = function (endpoint: string, body: BodyInit, config = {}) {
   return client(endpoint, { ...config, body, method: 'PATCH' });
+};
+
+export const sortProductsByType = (products: ProductType[], sortBy: SortBy) => {
+  if (!products?.length) return products;
+
+  if (sortBy === SortBy.UNSORTED) return products;
+
+  const productsCopy = [...products];
+
+  switch (sortBy) {
+    case SortBy.NAMEaz:
+      return productsCopy.sort((a, b) => a.title.localeCompare(b.title));
+    case SortBy.NAMEza:
+      return productsCopy.sort((a, b) => b.title.localeCompare(a.title));
+    case SortBy.PRICE09:
+      return productsCopy.sort((a, b) => a.price - b.price);
+    case SortBy.PRICE90:
+      return productsCopy.sort((a, b) => b.price - a.price);
+    case SortBy.RATING09:
+      return productsCopy.sort((a, b) => a.rating.rate - b.rating.rate);
+    case SortBy.RATING90:
+      return productsCopy.sort((a, b) => b.rating.rate - a.rating.rate);
+    default:
+      return products;
+  }
 };

@@ -36,3 +36,9 @@ body {
   user-select: none;
   opacity: 0.5;
 }
+
+.crop-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
