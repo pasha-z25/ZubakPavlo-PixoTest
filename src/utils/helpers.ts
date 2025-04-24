@@ -1,6 +1,17 @@
 import { API_URL } from './constants';
 import type { ApiClient, ApiOptionsType } from './types';
 
+export const getCurrencyValue = (
+  number: number,
+  currency: string = 'USD',
+  locale: string = 'en'
+) => {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+  }).format(number);
+};
+
 export const client: ApiClient = async (path, options) => {
   const REQUEST_URL = `${API_URL}${path}`;
 
