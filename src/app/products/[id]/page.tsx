@@ -8,7 +8,7 @@ export default async function Product({ params }: IPageProps) {
 
   if (!id) return null;
 
-  const product: ProductType = await client.get(`${API_ENDPOINTS.PRODUCTS}/${id}`);
+  const product = (await client.get(`${API_ENDPOINTS.PRODUCTS}/${id}`)) as ProductType;
 
   return <ProductDetails product={product} />;
 }

@@ -4,7 +4,7 @@ import type { ProductType } from '@/utils/types';
 import AllProducts from '@/views/AllProducts';
 
 export default async function Products() {
-  const products: ProductType[] = await client.get(API_ENDPOINTS.PRODUCTS);
+  const products = (await client.get(API_ENDPOINTS.PRODUCTS)) as ProductType[];
 
   return <AllProducts products={products} />;
 }

@@ -7,9 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:fix": "npx eslint . --fix",
     "pretty": "npx prettier . --write",
-    "check": "npm run pretty && npm run lint:fix",
+    "check": "npm run pretty && npm run lint",
     "prepare": "husky"
   },
   "dependencies": {

@@ -1,5 +1,5 @@
 export type AnyObj = {
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
 export interface ApiOptionsType extends RequestInit {
@@ -9,11 +9,11 @@ export interface ApiOptionsType extends RequestInit {
 }
 
 export interface ApiClient {
-  (path: string, options?: ApiOptionsType): Promise<any>;
-  get: (endpoint: string, config?: ApiOptionsType) => Promise<any>;
-  post: (endpoint: string, body: BodyInit, config?: ApiOptionsType) => Promise<any>;
-  delete: (endpoint: string, config?: ApiOptionsType) => Promise<any>;
-  patch: (endpoint: string, body: BodyInit, config?: ApiOptionsType) => Promise<any>;
+  (path: string, options?: ApiOptionsType): Promise<unknown>;
+  get: (endpoint: string, config?: ApiOptionsType) => Promise<unknown>;
+  post: (endpoint: string, body: BodyInit, config?: ApiOptionsType) => Promise<unknown>;
+  delete: (endpoint: string, config?: ApiOptionsType) => Promise<unknown>;
+  patch: (endpoint: string, body: BodyInit, config?: ApiOptionsType) => Promise<unknown>;
 }
 
 export interface IPageProps {
