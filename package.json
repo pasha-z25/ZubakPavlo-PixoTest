@@ -7,12 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:fix": "npx eslint . --fix",
     "pretty": "npx prettier . --write",
-    "check": "npm run pretty && npm run lint:fix",
+    "check": "npm run pretty && npm run lint",
     "prepare": "husky"
   },
   "dependencies": {
+    "classnames": "^2.5.1",
     "next": "15.3.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
