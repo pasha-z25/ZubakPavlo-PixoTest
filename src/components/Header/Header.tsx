@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation';
 
 import Cart from '@/components/Cart';
 import Checkout from '@/components/Checkout';
+import ThemeSwitcher from '@/components/ThemeSwitcher';
 import Link from 'next/link';
 
 export default function Header() {
@@ -32,7 +33,10 @@ export default function Header() {
               Products
             </Link>
           </nav>
-          <Cart />
+          <div className="flex items-center gap-4">
+            <ThemeSwitcher />
+            <Cart />
+          </div>
         </div>
       </div>
       {checkout && <Checkout />}
