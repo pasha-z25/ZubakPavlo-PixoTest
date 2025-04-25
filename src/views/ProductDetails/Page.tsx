@@ -1,7 +1,8 @@
 'use client';
 
 import { useAppDispatch, useAppSelector } from '@/store';
-import { getProduct, getProductStatus, getSelectedProduct } from '@/store/slices/productSlice';
+import { addItem, selectCartItemById } from '@/store/slices/cartSlice';
+import { getProduct, getProductsStatus, getSelectedProduct } from '@/store/slices/productsSlice';
 import { getCurrencyValue } from '@/utils/helpers';
 import type { ProductType } from '@/utils/types';
 import { useEffect } from 'react';
@@ -18,13 +19,26 @@ import Image from 'next/image';
 export default function Page({ id }: { id: number }) {
   const dispatch = useAppDispatch();
   const product = useAppSelector(getSelectedProduct);
-  const { loading, error } = useAppSelector(getProductStatus);
+  const { loading, error } = useAppSelector(getProductsStatus);
+  const cartItemById = useAppSelector(selectCartItemById(id));
 
   useEffect(() => {
     if (!product || product?.id !== id) {
       dispatch(getProduct(id));
     }
   }, [dispatch, id]);
+
+  const addToCart = (product: ProductType) => {
+    dispatch(
+      addItem({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+      })
+    );
+  };
 
   if (loading) return <Loader />;
 
@@ -38,6 +52,7 @@ export default function Page({ id }: { id: number }) {
           src={product.image}
           alt={product.title}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
       <div>
@@ -46,9 +61,20 @@ export default function Page({ id }: { id: number }) {
         </Typography>
         <div className="my-4 flex flex-wrap items-center justify-between gap-4 md:mb-8">
           <Typography className="category">Category: {product.category}</Typography>
-          <div className="flex flex-wrap items-center gap-4">
-            <TbShoppingCartPlus size={25} className="cursor-pointer" />
-            <TbShoppingCartCopy size={25} className="disabled" />
+          <div className="p-2">
+            {cartItemById ? (
+              <TbShoppingCartCopy size={25} className="disabled" />
+            ) : (
+              <TbShoppingCartPlus
+                size={25}
+                className="relative z-[5] cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  addToCart(product);
+                }}
+              />
+            )}
           </div>
         </div>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-4">

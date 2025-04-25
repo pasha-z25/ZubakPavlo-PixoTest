@@ -1,14 +1,23 @@
 import { API_ENDPOINTS } from '@/utils/constants';
 import type { ProductType } from '@/utils/types';
-import { createAsyncThunk, createSlice, isPending, isRejected } from '@reduxjs/toolkit';
-import { BasicApiState } from '../types';
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+  isPending,
+  isRejected,
+} from '@reduxjs/toolkit';
 
-export interface ProductsState extends BasicApiState {
-  data: ProductType[] | null;
+export interface ProductsState {
+  allProducts: ProductType[] | null;
+  selectedProduct: ProductType | null;
+  error: string | undefined | null;
+  loading: boolean;
 }
 
 const initialState: ProductsState = {
-  data: null,
+  allProducts: null,
+  selectedProduct: null,
   error: null,
   loading: false,
 };
@@ -21,6 +30,17 @@ export const getProducts = createAsyncThunk(
   }
 );
 
+export const getProduct = createAsyncThunk(
+  'products/getProduct',
+  async (
+    payload: string | number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    { extra: { client } }: { extra: any }
+  ) => {
+    return await client.get(`${API_ENDPOINTS.PRODUCTS}/${payload}`);
+  }
+);
+
 const productsSlice = createSlice({
   name: 'products',
   initialState,
@@ -28,7 +48,12 @@ const productsSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(getProducts.fulfilled, (state, action) => {
-        state.data = action.payload;
+        state.allProducts = action.payload;
+        state.error = null;
+        state.loading = false;
+      })
+      .addCase(getProduct.fulfilled, (state, action) => {
+        state.selectedProduct = action.payload;
         state.error = null;
         state.loading = false;
       })
@@ -53,9 +78,19 @@ const productsSlice = createSlice({
 
 export default productsSlice.reducer;
 
-export const getAllProducts = (state: { products: ProductsState }) => state.products.data;
+const selectProducts = (state: { products: ProductsState }) => state.products;
 
-export const getProductsStatus = (state: { products: ProductsState }) => ({
-  loading: state.products.loading,
-  error: state.products.error,
-});
+export const getAllProducts = createSelector(
+  [selectProducts],
+  (products: ProductsState) => products.allProducts
+);
+
+export const getSelectedProduct = createSelector(
+  [selectProducts],
+  (products: ProductsState) => products.selectedProduct
+);
+
+export const getProductsStatus = createSelector([selectProducts], (products: ProductsState) => ({
+  loading: products.loading,
+  error: products.error,
+}));
