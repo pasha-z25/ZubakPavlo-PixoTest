@@ -1,5 +1,6 @@
 'use client';
 
+import staticText from '@/i18n/en/static';
 import { useAppSelector } from '@/store';
 import { getCheckoutStatus } from '@/store/slices/cartSlice';
 import { APP_PAGES } from '@/utils/constants';
@@ -16,7 +17,7 @@ export default function Header() {
   const checkout = useAppSelector(getCheckoutStatus);
 
   return (
-    <header id="header" className="header border-b border-b-gray-300 py-4">
+    <header id="header" className="header fixed z-10 w-full border-b border-b-gray-300 py-4">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between gap-4">
           <nav className="flex items-center gap-4">
@@ -24,13 +25,13 @@ export default function Header() {
               href={APP_PAGES.HOME_PAGE}
               className={classNames({ disabled: APP_PAGES.HOME_PAGE === pathname })}
             >
-              Home
+              {staticText.short.home}
             </Link>
             <Link
               href={APP_PAGES.PRODUCTS_PAGE}
               className={classNames({ disabled: APP_PAGES.PRODUCTS_PAGE === pathname })}
             >
-              Products
+              {staticText.short.products}
             </Link>
           </nav>
           <div className="flex items-center gap-4">

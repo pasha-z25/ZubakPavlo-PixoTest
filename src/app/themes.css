@@ -1,13 +1,23 @@
 :root[data-theme='light'] {
   --background: #ffffff;
-  --text: #000000;
-  --primary: #007bff;
+  --text: #454545;
+
+  --variant-textColor: red !important;
+  --variant-outlinedColor: red !important;
+  --variant-outlinedBorder: rgba(250, 10, 10, 0.5) !important;
+  --variant-containedColor: #fff;
+  --variant-containedBg: red !important;
 }
 
 :root[data-theme='dark'] {
-  --background: #1a1a1a;
-  --text: #ffffff;
-  --primary: #66b0ff;
+  --background: #1f1f1f;
+  --text: #cccccc;
+
+  --variant-textColor: green !important;
+  --variant-outlinedColor: green !important;
+  --variant-outlinedBorder: rgba(10, 250, 10, 0.5) !important;
+  --variant-containedColor: #fff;
+  --variant-containedBg: green !important;
 }
 
 body {
@@ -19,5 +29,34 @@ body {
 
   * {
     transition: all linear 0.3s;
+  }
+}
+
+[data-theme] {
+  .header {
+    background-color: var(--background);
+  }
+
+  [class$='MuiButtonBase-root-MuiButton-root'] {
+    --variant-textColor: var(--text) !important;
+    --variant-outlinedColor: var(--text) !important;
+    --variant-outlinedBorder: rgba(var(--text), 0.5) !important;
+    --variant-containedBg: var(--text) !important;
+  }
+
+  [class$='MuiSvgIcon-root-MuiSelect-icon'],
+  .MuiFormControlLabel-root [class$='MuiSvgIcon-root'] {
+    fill: var(--text) !important;
+  }
+
+  [class$='MuiInputBase-root-MuiInput-root-MuiSelect-root'],
+  [class$='MuiFormLabel-root-MuiInputLabel-root'],
+  [class$='MuiSelect-select-MuiInputBase-input-MuiInput-input'],
+  [class$='MuiSlider-root'] {
+    color: var(--text) !important;
+  }
+
+  [class$='MuiInputBase-root-MuiInput-root-MuiSelect-root']::before {
+    border-bottom-color: var(--text) !important;
   }
 }

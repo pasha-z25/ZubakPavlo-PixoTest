@@ -1,5 +1,6 @@
 'use client';
 
+import staticText from '@/i18n/en/static';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { addItem, selectCartItemById } from '@/store/slices/cartSlice';
 import { getProduct, getProductsStatus, getSelectedProduct } from '@/store/slices/productsSlice';
@@ -60,7 +61,9 @@ export default function Page({ id }: { id: number }) {
           {product.title}
         </Typography>
         <div className="my-4 flex flex-wrap items-center justify-between gap-4 md:mb-8">
-          <Typography className="category">Category: {product.category}</Typography>
+          <Typography className="category">
+            {staticText.short.category}: {product.category}
+          </Typography>
           <div className="p-2">
             {cartItemById ? (
               <TbShoppingCartCopy size={25} className="disabled" />
@@ -80,14 +83,15 @@ export default function Page({ id }: { id: number }) {
         <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
           <Typography className="price flex items-center gap-2">
             <BiSolidBadgeDollar size={20} fill="green" />
-            Price: {getCurrencyValue(product.price)}
+            {staticText.short.price}: {getCurrencyValue(product.price)}
           </Typography>
           <Typography className="rating flex items-center gap-2">
             <FcRating size={20} />
-            Rating: {product.rating.rate} ({product.rating.count} reviews)
+            {staticText.short.rating}: {product.rating.rate} ({product.rating.count}{' '}
+            {staticText.short.reviews})
           </Typography>
         </div>
-        <p className="description">{product.description}</p>
+        <Typography className="description">{product.description}</Typography>
       </div>
     </div>
   );
@@ -96,10 +100,14 @@ export default function Page({ id }: { id: number }) {
     <section className="section product-page py-10">
       <div className="container mx-auto px-4">
         <Typography variant="h6" component="h2" className="page-title">
-          Product Details
+          {staticText.short.productDetails}
         </Typography>
         <Divider className="!mt-4 !mb-8" />
-        {product ? renderProductDetails(product) : <Typography>No product found</Typography>}
+        {product ? (
+          renderProductDetails(product)
+        ) : (
+          <Typography>{staticText.error.noProductsFound}</Typography>
+        )}
       </div>
     </section>
   );

@@ -1,3 +1,4 @@
+import staticText from '@/i18n/en/static';
 import { API_URL } from './constants';
 import { SortBy, type ApiClient, type ApiOptionsType, type ProductType } from './types';
 
@@ -33,9 +34,11 @@ export const client: ApiClient = async (path, options) => {
     const result = await response.json();
 
     if (result.status === 'error') {
-      throw new Error(result.error?.message ? result.error.message : 'Something went wrong!');
+      throw new Error(
+        result.error?.message ? result.error.message : staticText.error.somethingWrong
+      );
     }
-    if (!response.ok) throw new Error('Something went wrong!');
+    if (!response.ok) throw new Error(staticText.error.somethingWrong);
 
     return result;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
