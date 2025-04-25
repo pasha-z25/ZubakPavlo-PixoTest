@@ -1,5 +1,6 @@
 'use client';
 
+import staticText from '@/i18n/en/static';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { addItem, selectCartItems } from '@/store/slices/cartSlice';
 import {
@@ -36,6 +37,7 @@ import InputLabel from '@mui/material/InputLabel';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import MenuItem from '@mui/material/MenuItem';
+import Rating from '@mui/material/Rating';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
@@ -111,14 +113,14 @@ export default function Page() {
 
   const renderFilters = () => (
     <fieldset className="border border-gray-300 px-2">
-      <legend>Products filters</legend>
+      <legend>{staticText.short.productsFilters}</legend>
       <FormControl
         variant="outlined"
         fullWidth
         className="mb-4 flex !flex-row items-center justify-between gap-4"
       >
         <div>
-          <Typography variant="subtitle1">Categories</Typography>
+          <Typography variant="subtitle1">{staticText.short.categories}</Typography>
           <div className="flex flex-wrap gap-2">
             {categories.map((category) => {
               const productCount = products?.filter((p) => p.category === category).length || 0;
@@ -137,10 +139,9 @@ export default function Page() {
             })}
           </div>
         </div>
-
         <div>
           <Typography variant="subtitle1">
-            Price Range: {filters.priceRange.min} - {filters.priceRange.max}
+            {staticText.short.priceRange}: {filters.priceRange.min} - {filters.priceRange.max}
           </Typography>
           <Slider
             value={[filters.priceRange.min, filters.priceRange.max]}
@@ -152,9 +153,8 @@ export default function Page() {
             className="w-48"
           />
         </div>
-
         <Button variant="outlined" onClick={handleResetFilters}>
-          Reset Filters
+          {staticText.short.resetFilters}
         </Button>
       </FormControl>
     </fieldset>
@@ -162,21 +162,21 @@ export default function Page() {
 
   const renderSorting = () => (
     <FormControl variant="standard" className="-translate-y-2">
-      <InputLabel id="sorting-select-label">Sort by</InputLabel>
+      <InputLabel id="sorting-select-label">{staticText.short.sortBy}</InputLabel>
       <Select
         labelId="sorting-select-label"
         id="sorting-select"
         value={sortBy}
-        label="Sort by"
+        label={staticText.short.sortBy}
         onChange={handleSelectChange}
       >
         <MenuItem value={SortBy.UNSORTED}>{SortBy.UNSORTED}</MenuItem>
-        <MenuItem value={SortBy.NAMEaz}>name (a-z)</MenuItem>
-        <MenuItem value={SortBy.NAMEza}>name (z-a)</MenuItem>
-        <MenuItem value={SortBy.PRICE09}>price (0-9)</MenuItem>
-        <MenuItem value={SortBy.PRICE90}>price (9-0)</MenuItem>
-        <MenuItem value={SortBy.RATING09}>rating (0-9)</MenuItem>
-        <MenuItem value={SortBy.RATING90}>rating (9-0)</MenuItem>
+        <MenuItem value={SortBy.NAMEaz}>{staticText.short.nameAZ}</MenuItem>
+        <MenuItem value={SortBy.NAMEza}>{staticText.short.nameZA}</MenuItem>
+        <MenuItem value={SortBy.PRICE09}>{staticText.short.price09}</MenuItem>
+        <MenuItem value={SortBy.PRICE90}>{staticText.short.price90}</MenuItem>
+        <MenuItem value={SortBy.RATING09}>{staticText.short.rating09}</MenuItem>
+        <MenuItem value={SortBy.RATING90}>{staticText.short.rating90}</MenuItem>
       </Select>
     </FormControl>
   );
@@ -184,20 +184,24 @@ export default function Page() {
   const renderPageHead = () => (
     <div className="flex items-center justify-between gap-6">
       <Typography variant="h6" component="h2" className="crop-text page-title flex-auto">
-        All Products
+        {staticText.short.allProducts}
       </Typography>
       {renderSorting()}
       <div className="hidden items-center justify-between gap-2 md:flex">
         <CiGrid2H
-          className="cursor-pointer transition-all"
+          className={classNames(
+            'view-icon cursor-pointer',
+            view === PageView.LIST ? 'active' : 'opacity-50'
+          )}
           size={30}
-          color={view === PageView.LIST ? 'blue' : 'gray'}
           onClick={() => setView(PageView.LIST)}
         />
         <CiGrid41
-          className="cursor-pointer transition-all"
+          className={classNames(
+            'view-icon cursor-pointer',
+            view === PageView.GRID ? 'active' : 'opacity-50'
+          )}
           size={30}
-          color={view === PageView.GRID ? 'blue' : 'gray'}
           onClick={() => setView(PageView.GRID)}
         />
       </div>
@@ -217,7 +221,12 @@ export default function Page() {
           <div className="flex gap-4">
             <Typography className="min-w-10">Price: {getCurrencyValue(product.price)}</Typography>
             <Typography className="min-w-10">
-              Rating: {product.rating.rate} ({product.rating.count} reviews)
+              <Rating
+                name="half-rating-read"
+                defaultValue={product.rating.rate}
+                precision={0.5}
+                readOnly
+              />
             </Typography>
           </div>
         </div>
@@ -257,9 +266,16 @@ export default function Page() {
         <Typography variant="h6" component="h3" className="col-span-3 !my-2 !leading-none">
           {product.title}
         </Typography>
-        <Typography className="min-w-10">Price: {getCurrencyValue(product.price)}</Typography>
-        <Typography className="min-w-10">
-          Rating: {product.rating.rate} ({product.rating.count} reviews)
+        <Typography className="min-w-10 self-center">
+          {staticText.short.price}: {getCurrencyValue(product.price)}
+        </Typography>
+        <Typography className="min-w-10 self-center">
+          <Rating
+            name="half-rating-read"
+            defaultValue={product.rating.rate}
+            precision={0.5}
+            readOnly
+          />
         </Typography>
         <div className="p-2">
           {isInCart ? (
@@ -309,7 +325,7 @@ export default function Page() {
         {(displayedProducts || []).length ? (
           renderProductsList(displayedProducts, view)
         ) : (
-          <Typography>No products found</Typography>
+          <Typography>{staticText.error.noProductsFound}</Typography>
         )}
       </div>
     </section>

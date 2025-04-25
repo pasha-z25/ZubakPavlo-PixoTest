@@ -1,4 +1,5 @@
 import ThemeProvider from '@/contexts/ThemeContext';
+import staticText from '@/i18n/en/static';
 import StoreProvider from '@/store/StoreProvider';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -25,8 +26,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Pixoram - test task',
-  description: "Zubak Pavlo's test task for Pixoram",
+  title: staticText.seo.defaultPageTitle,
+  description: staticText.seo.defaultPageDescription,
 };
 
 export default function RootLayout({
@@ -41,7 +42,8 @@ export default function RootLayout({
           <ThemeProvider>
             <div className="body-wrapper">
               <Header />
-              <main className="main">{children}</main>
+              <div />
+              <main className="main mt-20">{children}</main>
               <Footer />
             </div>
           </ThemeProvider>

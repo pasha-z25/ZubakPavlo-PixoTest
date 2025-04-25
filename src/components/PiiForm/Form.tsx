@@ -1,17 +1,19 @@
+import staticText from '@/i18n/en/static';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { ControlledTextField } from './components';
 import { PiiCartFormDefaultValues, PiiCartFormSchema, PiiCartFormType } from './schemas';
 
 import Button from '@mui/material/Button';
+import { ControlledTextField } from './components';
 
-export default function PII() {
+export default function PII({ formHandler }: { formHandler: () => void }) {
   const { control, handleSubmit } = useForm<PiiCartFormType>({
     resolver: zodResolver(PiiCartFormSchema),
     defaultValues: PiiCartFormDefaultValues,
   });
 
   const submitHandler = ({ fullName, email, phone, address }: PiiCartFormType) => {
+    formHandler();
     console.log('Submit PII form', { fullName, email, phone, address });
     // dispatch(submitForm(JSON.stringify({email, fullName, phone, address})));
   };
@@ -37,7 +39,7 @@ export default function PII() {
         className="col-span-2"
       />
       <Button type="submit" variant="outlined" className="col-span-2">
-        Submit
+        {staticText.button.submit}
       </Button>
     </form>
   );

@@ -1,6 +1,9 @@
 import { useAppDispatch, useAppSelector } from '@/store';
 import { enableCheckout, selectCartItemsCount } from '@/store/slices/cartSlice';
+
 import { FiShoppingCart } from 'react-icons/fi';
+
+import Box from '@mui/material/Box';
 
 export default function Cart() {
   const cartItemsCount = useAppSelector(selectCartItemsCount);
@@ -14,7 +17,11 @@ export default function Cart() {
       onClick={() => dispatch(enableCheckout())}
     >
       <FiShoppingCart size={25} />
-      {!!cartItemsCount && <span className="absolute -top-2 -right-3">{cartItemsCount}</span>}
+      {!!cartItemsCount && (
+        <Box component="span" className="absolute -top-2 -right-3">
+          {cartItemsCount}
+        </Box>
+      )}
     </div>
   );
 }
