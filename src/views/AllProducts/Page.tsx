@@ -1,14 +1,15 @@
 'use client';
 
 import { useAppDispatch, useAppSelector } from '@/store';
+import { addItem, selectCartItems } from '@/store/slices/cartSlice';
 import { getAllProducts, getProducts, getProductsStatus } from '@/store/slices/productsSlice';
 import { getCurrencyValue, sortProductsByType } from '@/utils/helpers';
 import { PageView, type ProductType, SortBy } from '@/utils/types';
 import classNames from 'classnames';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { CiGrid2H, CiGrid41 } from 'react-icons/ci';
+import { TbShoppingCartCopy, TbShoppingCartPlus } from 'react-icons/tb';
 
 import { Error, Loader } from '@/components/UIElements';
 import Card from '@mui/material/Card';
@@ -22,11 +23,13 @@ import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Page() {
   const dispatch = useAppDispatch();
   const { loading, error } = useAppSelector(getProductsStatus);
   const products = useAppSelector(getAllProducts);
+  const cartItems = useAppSelector(selectCartItems);
   const [view, setView] = useState<PageView>(PageView.GRID);
   const [sorting, setSorting] = useState<SortBy>(SortBy.UNSORTED);
   const [sortedProducts, setSortedProducts] = useState<ProductType[]>(products || []);
@@ -51,6 +54,18 @@ export default function Page() {
   if (loading) return <Loader />;
 
   if (error) return <Error message={error} />;
+
+  const addToCart = (product: ProductType) => {
+    dispatch(
+      addItem({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+      })
+    );
+  };
 
   const renderSorting = () => (
     <FormControl variant="standard" className="-translate-y-2">
@@ -96,42 +111,81 @@ export default function Page() {
     </div>
   );
 
-  const renderListItem = (product: ProductType) => (
-    <div className="flex items-center gap-4">
-      <Image src={product.image} alt={product.title} width={50} height={50} />
-      <div>
-        <Typography variant="h6" component="h3">
-          {product.title}
-        </Typography>
-        <div className="flex gap-4">
-          <Typography className="min-w-10">Price: {getCurrencyValue(product.price)}</Typography>
-          <Typography className="min-w-10">
-            Rating: {product.rating.rate} ({product.rating.count} reviews)
+  const renderListItem = (product: ProductType) => {
+    const isInCart = cartItems.some((item) => item.id === product.id);
+
+    return (
+      <div className="flex items-center gap-4">
+        <Image src={product.image} alt={product.title} width={50} height={50} />
+        <div className="flex-auto">
+          <Typography variant="h6" component="h3">
+            {product.title}
           </Typography>
+          <div className="flex gap-4">
+            <Typography className="min-w-10">Price: {getCurrencyValue(product.price)}</Typography>
+            <Typography className="min-w-10">
+              Rating: {product.rating.rate} ({product.rating.count} reviews)
+            </Typography>
+          </div>
+        </div>
+        <div className="p-2">
+          {isInCart ? (
+            <TbShoppingCartCopy size={25} className="disabled" />
+          ) : (
+            <TbShoppingCartPlus
+              size={25}
+              className="relative z-[5] cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                addToCart(product);
+              }}
+            />
+          )}
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
-  const renderGridItem = (product: ProductType) => (
-    <div className="grid h-full grid-cols-2 grid-rows-[auto_1fr_auto]">
-      <div className="relative col-span-2 aspect-square">
-        <Image
-          className="object-contain object-center"
-          src={product.image}
-          alt={product.title}
-          fill
-        />
+  const renderGridItem = (product: ProductType) => {
+    const isInCart = cartItems.some((item) => item.id === product.id);
+
+    return (
+      <div className="grid h-full grid-cols-[auto_1fr_auto] grid-rows-[auto_1fr_auto] gap-4">
+        <div className="relative col-span-3 aspect-square">
+          <Image
+            className="object-contain object-center"
+            src={product.image}
+            alt={product.title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </div>
+        <Typography variant="h6" component="h3" className="col-span-3 !my-2 !leading-none">
+          {product.title}
+        </Typography>
+        <Typography className="min-w-10">Price: {getCurrencyValue(product.price)}</Typography>
+        <Typography className="min-w-10">
+          Rating: {product.rating.rate} ({product.rating.count} reviews)
+        </Typography>
+        <div className="p-2">
+          {isInCart ? (
+            <TbShoppingCartCopy size={25} className="disabled" />
+          ) : (
+            <TbShoppingCartPlus
+              size={25}
+              className="relative z-[5] cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                addToCart(product);
+              }}
+            />
+          )}
+        </div>
       </div>
-      <Typography variant="h6" component="h3" className="col-span-2 !my-2 !leading-none">
-        {product.title}
-      </Typography>
-      <Typography className="min-w-10">Price: {getCurrencyValue(product.price)}</Typography>
-      <Typography className="min-w-10">
-        Rating: {product.rating.rate} ({product.rating.count} reviews)
-      </Typography>
-    </div>
-  );
+    );
+  };
 
   const renderProductsList = (products: ProductType[], view: PageView) => (
     <List
