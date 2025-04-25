@@ -13,8 +13,11 @@
 body {
   background-color: var(--background);
   color: var(--text);
-}
+  transition-property: color, background-color;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
 
-* {
-  transition: all linear 0.3s;
+  * {
+    transition: all linear 0.3s;
+  }
 }
