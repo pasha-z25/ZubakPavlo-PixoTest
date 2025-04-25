@@ -2,8 +2,21 @@
 
 import { useAppDispatch, useAppSelector } from '@/store';
 import { addItem, selectCartItems } from '@/store/slices/cartSlice';
-import { getAllProducts, getProducts, getProductsStatus } from '@/store/slices/productsSlice';
-import { getCurrencyValue, sortProductsByType } from '@/utils/helpers';
+import {
+  getAllProducts,
+  getCategories,
+  getFilteredAndSortedProducts,
+  getFilters,
+  getPriceRangeLimits,
+  getProducts,
+  getProductsStatus,
+  getSortBy,
+  resetFilters,
+  setCategoriesFilter,
+  setPriceRangeFilter,
+  setSortBy,
+} from '@/store/slices/productsSlice';
+import { getCurrencyValue } from '@/utils/helpers';
 import { PageView, type ProductType, SortBy } from '@/utils/types';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
@@ -12,15 +25,19 @@ import { CiGrid2H, CiGrid41 } from 'react-icons/ci';
 import { TbShoppingCartCopy, TbShoppingCartPlus } from 'react-icons/tb';
 
 import { Error, Loader } from '@/components/UIElements';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import InputLabel from '@mui/material/InputLabel';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -29,27 +46,48 @@ export default function Page() {
   const dispatch = useAppDispatch();
   const { loading, error } = useAppSelector(getProductsStatus);
   const products = useAppSelector(getAllProducts);
+  const displayedProducts = useAppSelector(getFilteredAndSortedProducts);
+  const filters = useAppSelector(getFilters);
+  const sortBy = useAppSelector(getSortBy);
+  const priceRangeLimits = useAppSelector(getPriceRangeLimits);
+  const categories = useAppSelector(getCategories);
   const cartItems = useAppSelector(selectCartItems);
+
   const [view, setView] = useState<PageView>(PageView.GRID);
-  const [sorting, setSorting] = useState<SortBy>(SortBy.UNSORTED);
-  const [sortedProducts, setSortedProducts] = useState<ProductType[]>(products || []);
 
   const handleSelectChange = (event: SelectChangeEvent) => {
-    setSorting(event.target.value as SortBy);
-    setSortedProducts(sortProductsByType(products || [], event.target.value as SortBy));
+    dispatch(setSortBy(event.target.value as SortBy));
+  };
+
+  const handleCategoryChange = (category: string, checked: boolean) => {
+    const updatedCategories = checked
+      ? [...filters.categories, category]
+      : filters.categories.filter((cat) => cat !== category);
+    dispatch(setCategoriesFilter(updatedCategories));
+  };
+
+  const handlePriceRangeChange = (event: Event, newValue: number | number[]) => {
+    if (Array.isArray(newValue)) {
+      dispatch(setPriceRangeFilter({ min: newValue[0], max: newValue[1] }));
+    }
   };
 
   useEffect(() => {
     if (!loading && !products?.length) {
       dispatch(getProducts());
     }
-  }, [products?.length, sortedProducts.length, dispatch, loading]);
+  }, [products?.length, displayedProducts.length, dispatch, loading]);
 
   useEffect(() => {
-    if (sortedProducts.length === 0 && products?.length) {
-      setSortedProducts(sortProductsByType(products, sorting));
+    if (products?.length && filters.priceRange.max === Infinity) {
+      dispatch(
+        setPriceRangeFilter({
+          min: priceRangeLimits.min,
+          max: priceRangeLimits.max,
+        })
+      );
     }
-  }, [products?.length, sortedProducts.length]);
+  }, [products, priceRangeLimits, filters.priceRange, dispatch]);
 
   if (loading) return <Loader />;
 
@@ -67,13 +105,68 @@ export default function Page() {
     );
   };
 
+  const handleResetFilters = () => {
+    dispatch(resetFilters());
+  };
+
+  const renderFilters = () => (
+    <fieldset className="border border-gray-300 px-2">
+      <legend>Products filters</legend>
+      <FormControl
+        variant="outlined"
+        fullWidth
+        className="mb-4 flex !flex-row items-center justify-between gap-4"
+      >
+        <div>
+          <Typography variant="subtitle1">Categories</Typography>
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category) => {
+              const productCount = products?.filter((p) => p.category === category).length || 0;
+              return (
+                <FormControlLabel
+                  key={category}
+                  control={
+                    <Checkbox
+                      checked={filters.categories.includes(category)}
+                      onChange={(e) => handleCategoryChange(category, e.target.checked)}
+                    />
+                  }
+                  label={`${category} (${productCount})`}
+                />
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <Typography variant="subtitle1">
+            Price Range: {filters.priceRange.min} - {filters.priceRange.max}
+          </Typography>
+          <Slider
+            value={[filters.priceRange.min, filters.priceRange.max]}
+            onChange={handlePriceRangeChange}
+            valueLabelDisplay="auto"
+            min={priceRangeLimits.min}
+            max={priceRangeLimits.max}
+            step={1}
+            className="w-48"
+          />
+        </div>
+
+        <Button variant="outlined" onClick={handleResetFilters}>
+          Reset Filters
+        </Button>
+      </FormControl>
+    </fieldset>
+  );
+
   const renderSorting = () => (
     <FormControl variant="standard" className="-translate-y-2">
       <InputLabel id="sorting-select-label">Sort by</InputLabel>
       <Select
         labelId="sorting-select-label"
         id="sorting-select"
-        value={sorting}
+        value={sortBy}
         label="Sort by"
         onChange={handleSelectChange}
       >
@@ -211,9 +304,10 @@ export default function Page() {
     <section className="section products-page py-10">
       <div className="container mx-auto px-4">
         {renderPageHead()}
+        {renderFilters()}
         <Divider className="!mt-4 !mb-8" />
-        {(sortedProducts || products || []).length ? (
-          renderProductsList(sortedProducts, view)
+        {(displayedProducts || []).length ? (
+          renderProductsList(displayedProducts, view)
         ) : (
           <Typography>No products found</Typography>
         )}
