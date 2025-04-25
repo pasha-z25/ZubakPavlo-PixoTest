@@ -14,6 +14,8 @@ import { FaMinus, FaPlus } from 'react-icons/fa6';
 import { MdOutlineDeleteForever } from 'react-icons/md';
 
 import PiiForm from '@/components/PiiForm';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 
 export default function Checkout() {
@@ -98,7 +100,7 @@ export default function Checkout() {
           &times;
         </span>
         <h1 className="mt-2 mb-4">Your orders ({cartItems.length}):</h1>
-        {!!cartItems.length && (
+        {!!cartItems.length ? (
           <>
             <ul className="grid gap-2">
               {cartItems.map((item) => (
@@ -112,9 +114,20 @@ export default function Checkout() {
               </p>
             </div>
             <div className="mt-4">
-              <button onClick={() => showNextStep(true)}>Fill out PII</button>
+              <Button
+                onClick={() => showNextStep(true)}
+                type="button"
+                variant="outlined"
+                className="col-span-2"
+              >
+                Fill out PII
+              </Button>
             </div>
           </>
+        ) : (
+          <div className="mt-4">
+            <Typography>Your cart is empty. Add products to buy</Typography>
+          </div>
         )}
         {nextStep && <PiiForm />}
       </div>

@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} reltive antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <StoreProvider>
           <div className="body-wrapper">
             <Header />

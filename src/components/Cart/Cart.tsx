@@ -1,9 +1,9 @@
 import { useAppDispatch, useAppSelector } from '@/store';
-import { enableCheckout, selectCartItemCount } from '@/store/slices/cartSlice';
+import { enableCheckout, selectCartItemsCount } from '@/store/slices/cartSlice';
 import { FiShoppingCart } from 'react-icons/fi';
 
 export default function Cart() {
-  const cartItemsCount = useAppSelector(selectCartItemCount);
+  const cartItemsCount = useAppSelector(selectCartItemsCount);
   const dispatch = useAppDispatch();
 
   return (
