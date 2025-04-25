@@ -1,3 +1,4 @@
+import ThemeProvider from '@/contexts/ThemeContext';
 import StoreProvider from '@/store/StoreProvider';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -11,6 +12,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import './globals.css';
+import './themes.css';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -36,11 +38,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <StoreProvider>
-          <div className="body-wrapper">
-            <Header />
-            <main className="main">{children}</main>
-            <Footer />
-          </div>
+          <ThemeProvider>
+            <div className="body-wrapper">
+              <Header />
+              <main className="main">{children}</main>
+              <Footer />
+            </div>
+          </ThemeProvider>
         </StoreProvider>
       </body>
     </html>
