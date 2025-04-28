@@ -30,13 +30,9 @@ import Link from 'next/link';
 import Filters from './components/Filters';
 import PageHead from './components/PageHead';
 
-const DynamicGridItemView = dynamic(() => import('./components/GridItemView'), {
-  loading: () => <Loader />,
-});
+const DynamicGridItemView = dynamic(() => import('./components/GridItemView'));
 
-const DynamicListItemView = dynamic(() => import('./components/ListItemView'), {
-  loading: () => <Loader />,
-});
+const DynamicListItemView = dynamic(() => import('./components/ListItemView'));
 
 export default function Page() {
   const dispatch = useAppDispatch();

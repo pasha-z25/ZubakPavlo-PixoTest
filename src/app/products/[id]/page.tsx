@@ -1,10 +1,14 @@
+import { Loader } from '@/components/UIElements';
 import staticText from '@/i18n/en/static';
 import { API_ENDPOINTS } from '@/utils/constants';
 import { client } from '@/utils/helpers';
 import type { IPageProps, ProductType } from '@/utils/types';
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 
-import ProductDetails from '@/views/ProductDetails';
+const DynamicProductDetailsView = dynamic(() => import('../../../views/ProductDetails'), {
+  loading: () => <Loader />,
+});
 
 export async function generateMetadata({ params }: IPageProps): Promise<Metadata> {
   const { id } = await params;
@@ -33,5 +37,5 @@ export default async function Product({ params }: IPageProps) {
 
   if (!id) return null;
 
-  return <ProductDetails id={Number(id)} />;
+  return <DynamicProductDetailsView id={Number(id)} />;
 }

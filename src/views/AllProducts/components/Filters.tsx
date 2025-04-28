@@ -65,7 +65,7 @@ export default function Filters({
       <FormControl
         variant="outlined"
         fullWidth
-        className="mb-4 flex !flex-row items-center justify-between gap-4"
+        className="mb-4 flex justify-between gap-4 lg:!flex-row lg:items-center"
       >
         <div>
           <Typography variant="subtitle1">{staticText.short.categories}</Typography>
