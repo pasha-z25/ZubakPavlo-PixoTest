@@ -82,6 +82,7 @@ export default function Page() {
 
   const renderProductsList = (products: ProductType[], view: PageView) => (
     <List
+      data-testid="products-list-view"
       className={classNames('grid grid-cols-1 gap-4', {
         'md:grid-cols-2 lg:grid-cols-3': view === PageView.GRID,
       })}
@@ -117,7 +118,7 @@ export default function Page() {
   );
 
   return (
-    <section className="section products-page py-10">
+    <section data-testid="products-page-section" className="section products-page py-10">
       <div className="container mx-auto px-4">
         <PageHead sortBy={sortBy} view={view} setView={setView} />
         <Filters
@@ -130,7 +131,9 @@ export default function Page() {
         {(displayedProducts || []).length ? (
           renderProductsList(displayedProducts, view)
         ) : (
-          <Typography>{staticText.error.noProductsFound}</Typography>
+          <Typography data-testid="no-products-found">
+            {staticText.error.noProductsFound}
+          </Typography>
         )}
       </div>
     </section>
