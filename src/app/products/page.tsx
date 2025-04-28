@@ -1,7 +1,11 @@
+import { Loader } from '@/components/UIElements';
 import staticText from '@/i18n/en/static';
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 
-import AllProducts from '@/views/AllProducts';
+const DynamicAllProductsView = dynamic(() => import('../../views/AllProducts'), {
+  loading: () => <Loader />,
+});
 
 export const metadata: Metadata = {
   title: staticText.seo.allProductsPageTitle,
@@ -9,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Products() {
-  return <AllProducts />;
+  return <DynamicAllProductsView />;
 }
