@@ -12,37 +12,31 @@ import {
   getProducts,
   getProductsStatus,
   getSortBy,
-  resetFilters,
-  setCategoriesFilter,
   setPriceRangeFilter,
-  setSortBy,
 } from '@/store/slices/productsSlice';
-import { getCurrencyValue } from '@/utils/helpers';
-import { PageView, type ProductType, SortBy } from '@/utils/types';
+import { PageView, type ProductType } from '@/utils/types';
 import classNames from 'classnames';
+import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 
-import { CiGrid2H, CiGrid41 } from 'react-icons/ci';
-import { TbShoppingCartCopy, TbShoppingCartPlus } from 'react-icons/tb';
-
 import { Error, Loader } from '@/components/UIElements';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import InputLabel from '@mui/material/InputLabel';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import MenuItem from '@mui/material/MenuItem';
-import Rating from '@mui/material/Rating';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
-import Image from 'next/image';
 import Link from 'next/link';
+import Filters from './components/Filters';
+import PageHead from './components/PageHead';
+
+const DynamicGridItemView = dynamic(() => import('./components/GridItemView'), {
+  loading: () => <Loader />,
+});
+
+const DynamicListItemView = dynamic(() => import('./components/ListItemView'), {
+  loading: () => <Loader />,
+});
 
 export default function Page() {
   const dispatch = useAppDispatch();
@@ -57,28 +51,11 @@ export default function Page() {
 
   const [view, setView] = useState<PageView>(PageView.GRID);
 
-  const handleSelectChange = (event: SelectChangeEvent) => {
-    dispatch(setSortBy(event.target.value as SortBy));
-  };
-
-  const handleCategoryChange = (category: string, checked: boolean) => {
-    const updatedCategories = checked
-      ? [...filters.categories, category]
-      : filters.categories.filter((cat) => cat !== category);
-    dispatch(setCategoriesFilter(updatedCategories));
-  };
-
-  const handlePriceRangeChange = (event: Event, newValue: number | number[]) => {
-    if (Array.isArray(newValue)) {
-      dispatch(setPriceRangeFilter({ min: newValue[0], max: newValue[1] }));
-    }
-  };
-
   useEffect(() => {
     if (!loading && !products?.length) {
       dispatch(getProducts());
     }
-  }, [products?.length, displayedProducts.length, dispatch, loading]);
+  }, [products?.length, dispatch, loading]);
 
   useEffect(() => {
     if (products?.length && filters.priceRange.max === Infinity) {
@@ -89,7 +66,7 @@ export default function Page() {
         })
       );
     }
-  }, [products, priceRangeLimits, filters.priceRange, dispatch]);
+  }, [products?.length, priceRangeLimits, filters.priceRange.max, dispatch]);
 
   if (loading) return <Loader />;
 
@@ -107,220 +84,52 @@ export default function Page() {
     );
   };
 
-  const handleResetFilters = () => {
-    dispatch(resetFilters());
-  };
-
-  const renderFilters = () => (
-    <fieldset className="border border-gray-300 px-2">
-      <legend>{staticText.short.productsFilters}</legend>
-      <FormControl
-        variant="outlined"
-        fullWidth
-        className="mb-4 flex !flex-row items-center justify-between gap-4"
-      >
-        <div>
-          <Typography variant="subtitle1">{staticText.short.categories}</Typography>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => {
-              const productCount = products?.filter((p) => p.category === category).length || 0;
-              return (
-                <FormControlLabel
-                  key={category}
-                  control={
-                    <Checkbox
-                      checked={filters.categories.includes(category)}
-                      onChange={(e) => handleCategoryChange(category, e.target.checked)}
-                    />
-                  }
-                  label={`${category} (${productCount})`}
-                />
-              );
-            })}
-          </div>
-        </div>
-        <div>
-          <Typography variant="subtitle1">
-            {staticText.short.priceRange}: {filters.priceRange.min} - {filters.priceRange.max}
-          </Typography>
-          <Slider
-            value={[filters.priceRange.min, filters.priceRange.max]}
-            onChange={handlePriceRangeChange}
-            valueLabelDisplay="auto"
-            min={priceRangeLimits.min}
-            max={priceRangeLimits.max}
-            step={1}
-            className="w-48"
-          />
-        </div>
-        <Button variant="outlined" onClick={handleResetFilters}>
-          {staticText.short.resetFilters}
-        </Button>
-      </FormControl>
-    </fieldset>
-  );
-
-  const renderSorting = () => (
-    <FormControl variant="standard" className="-translate-y-2">
-      <InputLabel id="sorting-select-label">{staticText.short.sortBy}</InputLabel>
-      <Select
-        labelId="sorting-select-label"
-        id="sorting-select"
-        value={sortBy}
-        label={staticText.short.sortBy}
-        onChange={handleSelectChange}
-      >
-        <MenuItem value={SortBy.UNSORTED}>{SortBy.UNSORTED}</MenuItem>
-        <MenuItem value={SortBy.NAMEaz}>{staticText.short.nameAZ}</MenuItem>
-        <MenuItem value={SortBy.NAMEza}>{staticText.short.nameZA}</MenuItem>
-        <MenuItem value={SortBy.PRICE09}>{staticText.short.price09}</MenuItem>
-        <MenuItem value={SortBy.PRICE90}>{staticText.short.price90}</MenuItem>
-        <MenuItem value={SortBy.RATING09}>{staticText.short.rating09}</MenuItem>
-        <MenuItem value={SortBy.RATING90}>{staticText.short.rating90}</MenuItem>
-      </Select>
-    </FormControl>
-  );
-
-  const renderPageHead = () => (
-    <div className="flex items-center justify-between gap-6">
-      <Typography variant="h6" component="h2" className="crop-text page-title flex-auto">
-        {staticText.short.allProducts}
-      </Typography>
-      {renderSorting()}
-      <div className="hidden items-center justify-between gap-2 md:flex">
-        <CiGrid2H
-          className={classNames(
-            'view-icon cursor-pointer',
-            view === PageView.LIST ? 'active' : 'opacity-50'
-          )}
-          size={30}
-          onClick={() => setView(PageView.LIST)}
-        />
-        <CiGrid41
-          className={classNames(
-            'view-icon cursor-pointer',
-            view === PageView.GRID ? 'active' : 'opacity-50'
-          )}
-          size={30}
-          onClick={() => setView(PageView.GRID)}
-        />
-      </div>
-    </div>
-  );
-
-  const renderListItem = (product: ProductType) => {
-    const isInCart = cartItems.some((item) => item.id === product.id);
-
-    return (
-      <div className="flex items-center gap-4">
-        <Image src={product.image} alt={product.title} width={50} height={50} />
-        <div className="flex-auto">
-          <Typography variant="h6" component="h3">
-            {product.title}
-          </Typography>
-          <div className="flex gap-4">
-            <Typography className="min-w-10">Price: {getCurrencyValue(product.price)}</Typography>
-            <Typography className="min-w-10">
-              <Rating
-                name="half-rating-read"
-                defaultValue={product.rating.rate}
-                precision={0.5}
-                readOnly
-              />
-            </Typography>
-          </div>
-        </div>
-        <div className="p-2">
-          {isInCart ? (
-            <TbShoppingCartCopy size={25} className="disabled" />
-          ) : (
-            <TbShoppingCartPlus
-              size={25}
-              className="relative z-[5] cursor-pointer"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                addToCart(product);
-              }}
-            />
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  const renderGridItem = (product: ProductType) => {
-    const isInCart = cartItems.some((item) => item.id === product.id);
-
-    return (
-      <div className="grid h-full grid-cols-[auto_1fr_auto] grid-rows-[auto_1fr_auto] gap-4">
-        <div className="relative col-span-3 aspect-square">
-          <Image
-            className="object-contain object-center"
-            src={product.image}
-            alt={product.title}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        </div>
-        <Typography variant="h6" component="h3" className="col-span-3 !my-2 !leading-none">
-          {product.title}
-        </Typography>
-        <Typography className="min-w-10 self-center">
-          {staticText.short.price}: {getCurrencyValue(product.price)}
-        </Typography>
-        <Typography className="min-w-10 self-center">
-          <Rating
-            name="half-rating-read"
-            defaultValue={product.rating.rate}
-            precision={0.5}
-            readOnly
-          />
-        </Typography>
-        <div className="p-2">
-          {isInCart ? (
-            <TbShoppingCartCopy size={25} className="disabled" />
-          ) : (
-            <TbShoppingCartPlus
-              size={25}
-              className="relative z-[5] cursor-pointer"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                addToCart(product);
-              }}
-            />
-          )}
-        </div>
-      </div>
-    );
-  };
-
   const renderProductsList = (products: ProductType[], view: PageView) => (
     <List
       className={classNames('grid grid-cols-1 gap-4', {
         'md:grid-cols-2 lg:grid-cols-3': view === PageView.GRID,
       })}
     >
-      {products.map((product) => (
-        <ListItem key={product.id} className="!items-stretch !p-0">
-          <Link href={`/products/${product.id}`} className="link flex-auto">
-            <Card className="h-full w-full">
-              <CardContent className="h-full">
-                {view === PageView.LIST ? renderListItem(product) : renderGridItem(product)}
-              </CardContent>
-            </Card>
-          </Link>
-        </ListItem>
-      ))}
+      {products.map((product) => {
+        const isInCart = cartItems.some((item) => item.id === product.id);
+
+        return (
+          <ListItem key={product.id} className="!items-stretch !p-0">
+            <Link href={`/products/${product.id}`} className="link flex-auto">
+              <Card className="h-full w-full">
+                <CardContent className="h-full">
+                  {view === PageView.LIST ? (
+                    <DynamicListItemView
+                      product={product}
+                      isInCart={isInCart}
+                      addToCart={addToCart}
+                    />
+                  ) : (
+                    <DynamicGridItemView
+                      product={product}
+                      isInCart={isInCart}
+                      addToCart={addToCart}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            </Link>
+          </ListItem>
+        );
+      })}
     </List>
   );
 
   return (
     <section className="section products-page py-10">
       <div className="container mx-auto px-4">
-        {renderPageHead()}
-        {renderFilters()}
+        <PageHead sortBy={sortBy} view={view} setView={setView} />
+        <Filters
+          categories={categories}
+          products={products}
+          filters={filters}
+          priceRangeLimits={priceRangeLimits}
+        />
         <Divider className="!mt-4 !mb-8" />
         {(displayedProducts || []).length ? (
           renderProductsList(displayedProducts, view)
