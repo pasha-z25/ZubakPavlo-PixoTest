@@ -16,6 +16,7 @@ import {
 } from '@/store/slices/productsSlice';
 import { PageView, type ProductType } from '@/utils/types';
 import classNames from 'classnames';
+import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 
 import { Error, Loader } from '@/components/UIElements';
@@ -27,9 +28,11 @@ import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import Filters from './components/Filters';
-import GridItemView from './components/GridItemView';
-import ListItemView from './components/ListItemView';
 import PageHead from './components/PageHead';
+
+const DynamicGridItemView = dynamic(() => import('./components/GridItemView'));
+
+const DynamicListItemView = dynamic(() => import('./components/ListItemView'));
 
 export default function Page() {
   const dispatch = useAppDispatch();
@@ -93,9 +96,17 @@ export default function Page() {
               <Card className="h-full w-full">
                 <CardContent className="h-full">
                   {view === PageView.LIST ? (
-                    <ListItemView product={product} isInCart={isInCart} addToCart={addToCart} />
+                    <DynamicListItemView
+                      product={product}
+                      isInCart={isInCart}
+                      addToCart={addToCart}
+                    />
                   ) : (
-                    <GridItemView product={product} isInCart={isInCart} addToCart={addToCart} />
+                    <DynamicGridItemView
+                      product={product}
+                      isInCart={isInCart}
+                      addToCart={addToCart}
+                    />
                   )}
                 </CardContent>
               </Card>

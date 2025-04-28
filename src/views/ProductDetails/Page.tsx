@@ -27,7 +27,7 @@ export default function Page({ id }: { id: number }) {
     if (!product || product?.id !== id) {
       dispatch(getProduct(id));
     }
-  }, [dispatch, id]);
+  }, [product, dispatch, id]);
 
   const addToCart = (product: ProductType) => {
     dispatch(
