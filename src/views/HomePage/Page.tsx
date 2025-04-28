@@ -6,7 +6,7 @@ export default function Page() {
   return (
     <section className="section home-page py-10">
       <div className="container mx-auto px-4">
-        <Typography variant="h3" component="h1" className="title">
+        <Typography variant="h3" component="h1" className="title !text-2xl lg:!text-4xl">
           Zubak Pavlo - Pixoram Test Task
         </Typography>
         <Divider className="!mt-4 !mb-8" />
