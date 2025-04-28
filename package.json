@@ -1,5 +1,6 @@
 {
-  "name": "my-app",
+  "name": "pixoram-test-task",
+  "description": "Test task using the demo API and implementing the interface using Next.js",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -49,5 +50,8 @@
   },
   "lint-staged": {
     "**/*": "prettier . --write"
+  },
+  "engines": {
+    "node": ">=18.18.0"
   }
 }

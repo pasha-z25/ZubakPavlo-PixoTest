@@ -1,3 +1,6 @@
+// In the future, internationalization could be implemented here,
+// but it was not part of the requirements for this task.
+
 export default {
   seo: {
     defaultPageTitle: 'Pixoram - test task',
