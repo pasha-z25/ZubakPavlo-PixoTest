@@ -1,23 +1,16 @@
 :root[data-theme='light'] {
   --background: #ffffff;
   --text: #454545;
-
-  --variant-textColor: red !important;
-  --variant-outlinedColor: red !important;
-  --variant-outlinedBorder: rgba(250, 10, 10, 0.5) !important;
-  --variant-containedColor: #fff;
-  --variant-containedBg: red !important;
 }
 
 :root[data-theme='dark'] {
   --background: #1f1f1f;
   --text: #cccccc;
+}
 
-  --variant-textColor: green !important;
-  --variant-outlinedColor: green !important;
-  --variant-outlinedBorder: rgba(10, 250, 10, 0.5) !important;
-  --variant-containedColor: #fff;
-  --variant-containedBg: green !important;
+:root[data-theme='dark'] .checkout-window {
+  --background: #ffffff;
+  --text: #454545;
 }
 
 body {

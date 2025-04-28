@@ -39,6 +39,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <StoreProvider>
+          {/*
+            We could have used Redux to manage the theme state, 
+            but in this example, the Context API was used
+            to demonstrate its core functionality. 
+          */}
           <ThemeProvider>
             <div className="body-wrapper">
               <Header />
