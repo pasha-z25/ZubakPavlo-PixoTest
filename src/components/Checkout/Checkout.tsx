@@ -111,7 +111,7 @@ export default function Checkout() {
 
   return (
     <div className="checkout-window fixed inset-0 z-10 flex items-center justify-center bg-gray-700/50 p-4">
-      <div className="checkout-content relative max-h-[max(80dvh,500px)] w-full max-w-[min(90%,700px)] overflow-y-auto rounded-2xl bg-white px-4 py-8">
+      <div className="checkout-content relative max-h-[max(80dvh,500px)] w-full max-w-[min(90%,700px)] overflow-y-auto rounded-2xl bg-white px-4 py-8 text-black/80">
         <Box
           component="span"
           className="absolute top-2 right-4 cursor-pointer text-2xl leading-none"

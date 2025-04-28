@@ -4,6 +4,8 @@
 
 ZubakPavlo-PixoTest is a test project developed for Pixoram as part of a Middle Frontend Developer assignment. It is an online product catalog application that allows users to browse products, filter them by categories and price range, sort by various criteria (price, name, rating), view product details, add items to a shopping cart, and complete a checkout process. The product data is fetched from the public [Fake Store API](https://fakestoreapi.com/).
 
+A live demo of the project is deployed on Vercel and can be accessed at https://zubak-pavlo-pixo-test.vercel.app/ for quick exploration.
+
 ### Core Features
 
 - Product Listing Page:
